@@ -16,7 +16,7 @@ $('#bookFilter').addEventListener('input',renderBooks);$('#canonFilter').addEven
 async function initStudyMode(){try{const paths=await fetch('data/study_paths.json').then(r=>r.json());const grid=document.getElementById('studyGrid'),panel=document.getElementById('studyPanel');if(!grid)return;grid.innerHTML=paths.map(p=>`<article class="studycard" data-path="${p.id}"><span class="tag">${p.theme}</span><h3>${p.title}</h3><p>${p.subtitle}</p></article>`).join('');grid.querySelectorAll('.studycard').forEach(card=>card.addEventListener('click',()=>{const p=paths.find(x=>x.id===card.dataset.path);panel.classList.remove('hidden');panel.innerHTML=`<p class="eyebrow">Guided study</p><h2>${p.title}</h2><p class="lead">${p.subtitle}</p><p class="studyintro">${p.summary}</p><div>${p.items.map(i=>`<div class="pathitem"><div><span class="pathrefs">${i[0]} ↔ ${i[1]}</span> <span class="level${i[2]}">${i[2]==='B'?'Level B · sourced':'Level R · scholar review'}</span></div><p>${i[3]}</p></div>`).join('')}</div>`;panel.scrollIntoView({behavior:'smooth',block:'start'});}));}catch(e){console.error('Study Mode',e)}}
 window.addEventListener('DOMContentLoaded',initStudyMode);
 
-// Edition 1.3.10 Stability Hotfix
+// Edition 1.3.5 Messianic Prophecy Visual Enhancement
 let VDATA=null,PDATA=null,CDATA=null,VTYPE='cathedral',VFOCUS=null,CANONMODE='73',PFOCUS=null;
 let VZOOM=1,VPANX=0,VPANY=0,VDRAG=false,VLAST=null;
 const SVGNS='http://www.w3.org/2000/svg';
@@ -39,12 +39,12 @@ function palette(){return PALETTES[document.getElementById('paletteSelect')?.val
 function archFactor(){return +(document.getElementById('archHeightRange')?.value||150)/100}
 function bookInfo(code){return VDATA.books.find(b=>b.code===code)}
 function edgeClass(e){const a=bookInfo(e.a),b=bookInfo(e.b);if(a?.nt&&b?.nt)return 'ntnt';if(a?.nt||b?.nt)return 'otnt';return 'otot'}
-function cathedralEdgeColor(e,isD,emph){const pal=palette();if(isD&&emph)return pal.deut;return pal[edgeClass(e)]}
+function edgeColor(e,isD,emph){const pal=palette();if(isD&&emph)return pal.deut;return pal[edgeClass(e)]}
 const PROPHECY_SCHEMES={
  illuminated:{h0:198,step:47,s:78,l:63}, stained:{h0:166,step:61,s:74,l:58}, ember:{h0:212,step:43,s:86,l:62}, mono:{h0:38,step:7,s:28,l:72}, electric:{h0:186,step:73,s:100,l:58}, royal:{h0:220,step:53,s:90,l:58}, neon:{h0:150,step:67,s:100,l:55}
 };
 function prophecyBookColor(i){const key=document.getElementById('paletteSelect')?.value||'illuminated',q=PROPHECY_SCHEMES[key]||PROPHECY_SCHEMES.illuminated;return `hsl(${(q.h0+i*q.step)%360} ${q.s}% ${q.l}%)`}
-function addArc(g,x1,x2,y,e,isD,max,emph){let span=Math.abs(x2-x1);/* 2x original 1.3.2 arch curvature, while keeping the original baseline */let h=Math.min(1240,(144+span*1.04)*archFactor()),mid=(x1+x2)/2;let p=S('path',{d:`M${x1},${y} Q${mid},${y-h} ${x2},${y}`,class:'v-arc',stroke:cathedralEdgeColor(e,isD,emph),'stroke-opacity':VFOCUS?'.9':(isD&&emph?'.8':'.3'),'stroke-width':Math.max(.9,Math.log10(e.count+1)*1.35)});p.addEventListener('mousemove',ev=>tipV(ev,`<b>${e.a} ↔ ${e.b}</b><br>${e.count.toLocaleString()} book-level relationships<br><span>${edgeClass(e)==='otot'?'OT ↔ OT':edgeClass(e)==='ntnt'?'NT ↔ NT':'OT ↔ NT'}</span>`));p.addEventListener('mouseleave',hideTip);g.appendChild(p)}
+function addArc(g,x1,x2,y,e,isD,max,emph){let span=Math.abs(x2-x1);/* 2x original 1.3.2 arch curvature, while keeping the original baseline */let h=Math.min(1240,(144+span*1.04)*archFactor()),mid=(x1+x2)/2;let p=S('path',{d:`M${x1},${y} Q${mid},${y-h} ${x2},${y}`,class:'v-arc',stroke:edgeColor(e,isD,emph),'stroke-opacity':VFOCUS?'.9':(isD&&emph?'.8':'.3'),'stroke-width':Math.max(.9,Math.log10(e.count+1)*1.35)});p.addEventListener('mousemove',ev=>tipV(ev,`<b>${e.a} ↔ ${e.b}</b><br>${e.count.toLocaleString()} book-level relationships<br><span>${edgeClass(e)==='otot'?'OT ↔ OT':edgeClass(e)==='ntnt'?'NT ↔ NT':'OT ↔ NT'}</span>`));p.addEventListener('mouseleave',hideTip);g.appendChild(p)}
 function selectedCathedralEdges(bs){const allowed=new Set(bs.map(b=>b.code)),density=+document.getElementById('densityRange').value,deutSet=new Set(VDATA.books.filter(b=>b.deut).map(b=>b.code));let all=VDATA.cathedral.filter(e=>allowed.has(e.a)&&allowed.has(e.b));if(CANONMODE==='diff') all=all.filter(e=>deutSet.has(e.a)||deutSet.has(e.b));if(VFOCUS)return all.filter(e=>e.a===VFOCUS||e.b===VFOCUS);
  // In Catholic 73 mode, reserve room for Catholic-specific edges so low-count Deuterocanonical arches are never silently cut off by density ranking.
  if(CANONMODE==='73'){
@@ -59,11 +59,10 @@ function renderBridge(){const {g}=clearV(),ds=VDATA.books.filter(b=>b.deut),nts=
 
 function renderProphecy(){
  const {g}=clearV();
- const title=S('text',{x:700,y:300,'text-anchor':'middle',class:'canon-number'});title.textContent='Messianic Prophecy';g.appendChild(title);
- const sub=S('text',{x:700,y:345,'text-anchor':'middle',class:'canon-copy'});sub.textContent='Work in progress — OT prophecy → specific NT fulfillment mapping is being rebuilt.';g.appendChild(sub);
- document.getElementById('visualMeta').innerHTML='<b>Messianic Prophecy (WIP)</b> · visualization intentionally blank until the complete OT → NT fulfillment mapping is normalized.';
+ document.getElementById('visualMeta').innerHTML='<b>Messianic Prophecy (WIP)</b> · Intentionally blank while the OT prophecy → specific NT fulfillment mapping is rebuilt and normalized.';
+ let t=S('text',{x:700,y:320,'text-anchor':'middle',class:'canon-copy'});t.textContent='Messianic Prophecy visualization — work in progress';g.appendChild(t);
+ let t2=S('text',{x:700,y:350,'text-anchor':'middle',class:'canon-copy'});t2.textContent='No prophecy arches are published in this view yet.';g.appendChild(t2);
 }
-
 function renderLegend(){document.getElementById('visualLegend')?.remove();document.getElementById('constellationLegend')?.remove();let box=document.createElement('div');box.id='visualLegend';box.className='visual-legend';let pal=palette();if(VTYPE==='bridge'){const ds=VDATA.books.filter(b=>b.deut);box.classList.add('bridge-legend');box.innerHTML=ds.map((b,i)=>`<span><i style="background:${prophecyBookColor(i)}"></i>${b.name}</span>`).join('')+'<span class="legend-note">Color follows the Deuterocanonical source book.</span>';}else if(VTYPE==='prophecy'){box.classList.add('prophecy-legend');box.innerHTML='<span>OT source books use distinct palette colors. Hover/click a source to isolate its fulfillment arches.</span>';}else if(VTYPE==='constellation'){box.classList.add('constellation-legend');box.innerHTML=Object.values(GROUP_STYLE).map(([n,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join('')+`<span class="legend-note">Nodes = Catholic book groups · lines = ${document.getElementById('paletteSelect')?.selectedOptions[0]?.textContent||'selected palette'}</span>`;}else{box.innerHTML=`<span><i style="background:${pal.otot}"></i>OT ↔ OT</span><span><i style="background:${pal.ntnt}"></i>NT ↔ NT</span><span><i style="background:${pal.otnt}"></i>OT ↔ NT</span><span><i style="background:${pal.deut}"></i>${CANONMODE==='diff'?'Difference-only Deuterocanon arches':'Deuterocanon emphasis'}</span>`;}document.querySelector('.visual-stage').appendChild(box)}
 ;
 const GROUP_STYLE={pentateuch:['Pentateuch','#f4c95d'],historical:['Historical Books','#e07a5f'],wisdom:['Wisdom / Poetry','#81b29a'],major:['Major Prophets','#9b5de5'],minor:['Minor Prophets','#00b4d8'],gospels:['Gospels','#ef476f'],acts:['Acts','#ff9f1c'],pauline:['Pauline & Hebrews','#4cc9f0'],catholic:['Catholic Epistles','#90be6d'],revelation:['Revelation','#f72585']};
@@ -79,7 +78,7 @@ function addOutsideLabel(g,x,y,r,text,color,centerX,centerY,cls='const-label'){
  g.appendChild(S('line',{x1,y1,x2,y2,stroke:color,'stroke-opacity':'.65','stroke-width':'.8'}));
  let t=S('text',{x:x2+ux*4,y:y2+uy*4,'text-anchor':ux>.2?'start':ux<-.2?'end':'middle',class:cls,fill:color});t.textContent=text;g.appendChild(t)
 }
-function renderConstellationLegend(){}
+function renderConstellationLegend(){let old=document.getElementById('constellationLegend');if(old)old.remove();if(VTYPE!=='constellation')return;let box=document.createElement('div');box.id='constellationLegend';box.className='visual-legend constellation-legend';box.innerHTML=Object.values(GROUP_STYLE).map(([n,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join('')+`<span class="legend-note">Nodes = Catholic book groups · lines = ${document.getElementById('paletteSelect')?.selectedOptions[0]?.textContent||'selected palette'}</span>`;document.querySelector('.visual-stage').appendChild(box)}
 function renderConstellation(){
  if(CONSTMODE==='chapter')return renderConstellationBook(CONSTBOOK);
  const {g}=clearV(),cx=700,cy=340,bs=VDATA.books,ring=250,positions=new Map();
