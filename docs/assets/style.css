@@ -13,3 +13,6 @@
 
 /* Edition 1.3.5 prophecy interaction */
 .prophecy-book{cursor:pointer}.prophecy-book text{font-weight:800}.prophecy-book.active text{font-weight:900;filter:drop-shadow(0 0 5px currentColor)}.prophecy-count{font:800 26px Georgia,serif;fill:#f2d58d}.prophecy-legend{max-width:410px}.prophecy-arc{transition:stroke-opacity .12s,stroke-width .12s}.prophecy-title{font-size:22px}
+
+/* Edition 1.3.7 Constellation of Scripture */
+.const-line{pointer-events:none}.const-star{filter:drop-shadow(0 0 7px currentColor);cursor:pointer}.const-label{font-size:10px;fill:#e9edf7;pointer-events:none}.const-star.dim{opacity:.7}.const-star.chapter{filter:drop-shadow(0 0 8px #fff)}.const-ch-label{font-size:8px;fill:#111;font-weight:800;pointer-events:none}.const-center{font-size:22px;fill:#fff;font-weight:700;filter:drop-shadow(0 0 10px #65d6ff)}.const-back{font-size:13px;fill:#65d6ff;cursor:pointer;text-decoration:underline}
