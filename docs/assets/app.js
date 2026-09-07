@@ -65,7 +65,30 @@ function renderProphecy(){
 }
 function renderLegend(){document.getElementById('visualLegend')?.remove();document.getElementById('constellationLegend')?.remove();let box=document.createElement('div');box.id='visualLegend';box.className='visual-legend';let pal=palette();if(VTYPE==='bridge'){const ds=VDATA.books.filter(b=>b.deut);box.classList.add('bridge-legend');box.innerHTML=ds.map((b,i)=>`<span><i style="background:${prophecyBookColor(i)}"></i>${b.name}</span>`).join('')+'<span class="legend-note">Color follows the Deuterocanonical source book.</span>';}else if(VTYPE==='prophecy'){box.classList.add('prophecy-legend');box.innerHTML='<span>OT source books use distinct palette colors. Hover/click a source to isolate its fulfillment arches.</span>';}else if(VTYPE==='constellation'){box.classList.add('constellation-legend');box.innerHTML=Object.values(GROUP_STYLE).map(([n,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join('')+`<span class="legend-note">Nodes = Catholic book groups · lines = ${document.getElementById('paletteSelect')?.selectedOptions[0]?.textContent||'selected palette'}</span>`;}else{box.innerHTML=`<span><i style="background:${pal.otot}"></i>OT ↔ OT</span><span><i style="background:${pal.ntnt}"></i>NT ↔ NT</span><span><i style="background:${pal.otnt}"></i>OT ↔ NT</span><span><i style="background:${pal.deut}"></i>${CANONMODE==='diff'?'Difference-only Deuterocanon arches':'Deuterocanon emphasis'}</span>`;}document.querySelector('.visual-stage').appendChild(box)}
 ;
-const GROUP_STYLE={pentateuch:['Pentateuch','#f4c95d'],historical:['Historical Books','#e07a5f'],wisdom:['Wisdom / Poetry','#81b29a'],major:['Major Prophets','#9b5de5'],minor:['Minor Prophets','#00b4d8'],gospels:['Gospels','#ef476f'],acts:['Acts','#ff9f1c'],pauline:['Pauline & Hebrews','#4cc9f0'],catholic:['Catholic Epistles','#90be6d'],revelation:['Revelation','#f72585']};
+const BOOK_GROUPS={
+ pentateuch:new Set('GEN EXO LEV NUM DEU'.split(' ')),
+ historical:new Set('JOS JDG 1SA 2SA 1KI 2KI 1CH 2CH EZR NEH 1MA 2MA'.split(' ')),
+ novellas:new Set('RUT TOB JDT ESG'.split(' ')),
+ wisdom:new Set('JOB PSA PRO ECC SNG WIS SIR'.split(' ')),
+ prophetic:new Set('ISA JER LAM BAR EZK DAG HOS JOL AMO OBA JON MIC NAM HAB ZEP HAG ZEC MAL'.split(' ')),
+ gospels:new Set('MAT MRK LUK JHN'.split(' ')),
+ acts:new Set('ACT'.split(' ')),
+ pauline:new Set('ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB'.split(' ')),
+ catholic:new Set('JAS 1PE 2PE 1JN 2JN 3JN JUD'.split(' ')),
+ revelation:new Set('REV'.split(' '))
+};
+const GROUP_STYLE={
+ pentateuch:['Pentateuch','#f4c95d'],
+ historical:['Historical Books','#d97757'],
+ novellas:['Biblical Novellas','#f29e4c'],
+ wisdom:['Wisdom / Poetry','#72b7a1'],
+ prophetic:['Prophetic Books','#8f6ad8'],
+ gospels:['Gospels','#ef476f'],
+ acts:['Acts','#ff9f1c'],
+ pauline:['New Testament Letters — Pauline & Hebrews','#38a8d8'],
+ catholic:['Catholic Letters','#7fbf5b'],
+ revelation:['Revelation','#e83e8c']
+};
 let CONSTMODE='book', CONSTBOOK='WIS', CONSTSCOPE='external';
 function bookGroup(code){for(const [g,set] of Object.entries(BOOK_GROUPS))if(set.has(code))return g;return 'historical'}
 function constellationColor(code){return GROUP_STYLE[bookGroup(code)][1]}
@@ -85,7 +108,7 @@ function renderConstellation(){
  bs.forEach((b,i)=>{let ang=-Math.PI/2+i*(Math.PI*2/bs.length);positions.set(b.code,[cx+Math.cos(ang)*ring,cy+Math.sin(ang)*ring])});
  let max=Math.max(...VDATA.cathedral.map(e=>e.count),1),edges=VDATA.cathedral.slice(0,+document.getElementById('densityRange').value);
  edges.slice().reverse().forEach(e=>{let a=positions.get(e.a),b=positions.get(e.b);if(!a||!b)return;g.appendChild(S('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'const-line',stroke:constellationEdgeColor(e.a,e.b),'stroke-opacity':Math.min(.52,.06+e.count/max*.42),'stroke-width':Math.max(.4,Math.sqrt(e.count/max)*2.5)}))});
- bs.forEach(b=>{let [x,y]=positions.get(b.code),r=5+Math.min(10,Math.log10((b.verified||1)+1)*1.7),color=constellationColor(b.code),gg=S('g',{class:'const-book'});gg.appendChild(S('circle',{cx:x,cy:y,r,fill:color,class:'const-star'}));addOutsideLabel(gg,x,y,r,b.code,color,cx,cy);gg.addEventListener('click',()=>{CONSTBOOK=b.code;CONSTMODE='chapter';syncConstControls();renderVisual()});gg.addEventListener('mousemove',ev=>tipV(ev,`<b>${b.name}</b><br>${GROUP_STYLE[bookGroup(b.code)][0]}<br>${(b.verified||0).toLocaleString()} verified outgoing relationships<br>Click for chapter constellation`));gg.addEventListener('mouseleave',hideTip);g.appendChild(gg)});
+ bs.forEach(b=>{let [x,y]=positions.get(b.code),r=5+Math.min(10,Math.log10((b.verified||1)+1)*1.7),color=constellationColor(b.code),gg=S('g',{class:'const-book'});gg.appendChild(S('circle',{cx:x,cy:y,r,fill:color,class:'const-star'}));addOutsideLabel(gg,x,y,r,b.name,color,cx,cy);gg.addEventListener('click',()=>{CONSTBOOK=b.code;CONSTMODE='chapter';syncConstControls();renderVisual()});gg.addEventListener('mousemove',ev=>tipV(ev,`<b>${b.name}</b><br>${GROUP_STYLE[bookGroup(b.code)][0]}<br>${(b.verified||0).toLocaleString()} verified outgoing relationships<br>Click for chapter constellation`));gg.addEventListener('mouseleave',hideTip);g.appendChild(gg)});
  document.getElementById('visualMeta').innerHTML=`<b>Constellation of Scripture · Book Mode</b> · 73 books · node color = Catholic book grouping · line color = selected palette`;
  renderConstellationLegend();
 }
@@ -100,7 +123,7 @@ function renderConstellationBook(code){
  others.forEach((b,i)=>{let ang=-Math.PI/2+i*(Math.PI*2/others.length);pos.set(b.code,[cx+Math.cos(ang)*300,cy+Math.sin(ang)*300])});
  let max=Math.max(...rel.map(e=>e.count),1);rel.slice(0,2500).reverse().forEach(e=>{let ownch=e.a.startsWith(code+'.')?e.a:e.b,other=e.a===ownch?e.b:e.a,ob=other.split('.')[0],a=ownpos.get(ownch),b=ob===code?ownpos.get(other):pos.get(ob);if(!a||!b)return;let p=S('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'const-line',stroke:constellationEdgeColor(ownch,other),'stroke-opacity':Math.min(.78,.1+e.count/max*.6),'stroke-width':Math.max(.5,Math.sqrt(e.count/max)*2.7)});p.addEventListener('mousemove',ev=>tipV(ev,`<b>${e.a} ↔ ${e.b}</b><br>${e.count} normalized chapter-level relationships`));p.addEventListener('mouseleave',hideTip);g.appendChild(p)});
  if(CONSTSCOPE!=='internal')others.forEach(b=>{let [x,y]=pos.get(b.code),color=constellationColor(b.code),gg=S('g');gg.appendChild(S('circle',{cx:x,cy:y,r:3.8,fill:color,class:'const-star dim'}));addOutsideLabel(gg,x,y,3.8,b.code,color,cx,cy);g.appendChild(gg)});
- let ownColor=constellationColor(code);own.forEach(ch=>{let [x,y]=ownpos.get(ch),gg=S('g',{class:'const-chapter'}),r=5.5;gg.appendChild(S('circle',{cx:x,cy:y,r,fill:ownColor,class:'const-star chapter'}));addOutsideLabel(gg,x,y,r,ch.split('.')[1],ownColor,cx,cy,'const-ch-label-out');g.appendChild(gg)});
+ let ownColor=constellationColor(code);own.forEach(ch=>{let [x,y]=ownpos.get(ch),gg=S('g',{class:'const-chapter'}),r=5.5;gg.appendChild(S('circle',{cx:x,cy:y,r,fill:ownColor,class:'const-star chapter'}));addOutsideLabel(gg,x,y,r,`${code} ${ch.split('.')[1]}`,ownColor,cx,cy,'const-ch-label-out');g.appendChild(gg)});
  let center=S('text',{x:cx,y:cy+5,'text-anchor':'middle',class:'const-center',fill:ownColor});center.textContent=binfo?.name||code;g.appendChild(center);
  document.getElementById('visualMeta').innerHTML=`<b>Constellation · Chapter Mode · ${binfo?.name||code}</b> · ${own.length} chapters · ${rel.length.toLocaleString()} displayed chapter-pair records · ${CONSTSCOPE==='internal'?'within book':CONSTSCOPE==='external'?'book ↔ rest of Scripture':'all relationships'}`;
  renderConstellationLegend();
