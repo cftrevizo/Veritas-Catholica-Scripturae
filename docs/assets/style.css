@@ -16,3 +16,6 @@
 
 /* Edition 1.3.7 Constellation of Scripture */
 .const-line{pointer-events:none}.const-star{filter:drop-shadow(0 0 7px currentColor);cursor:pointer}.const-label{font-size:10px;fill:#e9edf7;pointer-events:none}.const-star.dim{opacity:.7}.const-star.chapter{filter:drop-shadow(0 0 8px #fff)}.const-ch-label{font-size:8px;fill:#111;font-weight:800;pointer-events:none}.const-center{font-size:22px;fill:#fff;font-weight:700;filter:drop-shadow(0 0 10px #65d6ff)}.const-back{font-size:13px;fill:#65d6ff;cursor:pointer;text-decoration:underline}
+
+/* Edition 1.3.8 Constellation navigation & semantic book groups */
+.constellation-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.constellation-controls select{background:#111b28;color:#eadfc7;border:1px solid rgba(218,184,108,.35);border-radius:6px;padding:7px 9px;max-width:240px}.constellation-legend{top:auto;bottom:14px;max-width:760px}.constellation-legend span{white-space:nowrap}.const-label{font-size:10px;font-weight:800;paint-order:stroke;stroke:#07101a;stroke-width:2px;stroke-linejoin:round}.const-ch-label-out{font-size:8px;font-weight:800;paint-order:stroke;stroke:#07101a;stroke-width:2px;stroke-linejoin:round}.const-book,.const-chapter{cursor:pointer}.const-line{transition:opacity .15s;filter:drop-shadow(0 0 2px rgba(255,255,255,.08))}
