@@ -907,6 +907,70 @@
         "Irenaeus, Polycarp and Apostolic Succession",
         "Justin Martyr and Early Christian Worship"
       ]
+    },
+    {
+      "id": "pat-tatian",
+      "author": "Tatian",
+      "work": "Address to the Greeks",
+      "date": "c. AD 170",
+      "era": "Second-century Apologists",
+      "kind": "Primary patristic text",
+      "topics": ["Apologetics", "Christology", "Scripture"],
+      "primary_url": "https://www.newadvent.org/fathers/0202.htm",
+      "reader_url": "",
+      "license": "Historic ANF translation presented by New Advent; consult critical editions for academic publication.",
+      "status": "Indexed",
+      "notes": "Work-level record. VCS links the primary-text reader and preserves the distinction between an early apologetic witness and later doctrinal formulation.",
+      "provenance_class": "Primary Text",
+      "related_topics": ["Historical Myth: “Nicaea Invented the Divinity of Jesus”", "Islam: “Jesus Is Only a Prophet, Not Divine”", "Dialogue & Debate: Burden of Proof, Definitions & Concessions"]
+    },
+    {
+      "id": "pat-theophilus",
+      "author": "Theophilus of Antioch",
+      "work": "To Autolycus",
+      "date": "c. AD 180",
+      "era": "Second-century Apologists",
+      "kind": "Primary patristic text",
+      "topics": ["Apologetics", "God", "Scripture", "Creation"],
+      "primary_url": "https://www.newadvent.org/fathers/0204.htm",
+      "reader_url": "",
+      "license": "Historic ANF translation presented by New Advent; consult critical editions for academic publication.",
+      "status": "Indexed",
+      "notes": "Work-level record. VCS indexes this second-century apologetic source as a research lead and does not infer later technical terminology from it.",
+      "provenance_class": "Primary Text",
+      "related_topics": ["Islam: “The Trinity Means Christians Worship Three Gods”", "Islam: “Jesus Is Only a Prophet, Not Divine”", "Historical Myth: “Nicaea Invented the Divinity of Jesus”"]
+    },
+    {
+      "id": "pat-minucius",
+      "author": "Minucius Felix",
+      "work": "Octavius",
+      "date": "late second / early third century",
+      "era": "Early Latin Apologists",
+      "kind": "Primary patristic text",
+      "topics": ["Apologetics", "Christian Worship", "Pagan Critiques"],
+      "primary_url": "https://www.newadvent.org/fathers/0410.htm",
+      "reader_url": "",
+      "license": "Historic ANF translation presented by New Advent; consult critical editions for academic publication.",
+      "status": "Indexed",
+      "notes": "Work-level record for early Latin Christian apologetics and the kinds of public objections addressed before the fourth century.",
+      "provenance_class": "Primary Text",
+      "related_topics": ["Historical Claim: “Catholicism Is Paganism with Christian Names”", "Constantine / Nicaea: “Constantine Created the Catholic Church”", "Dialogue & Debate: From Rebuttal to Invitation"]
+    },
+    {
+      "id": "pat-lactantius",
+      "author": "Lactantius",
+      "work": "The Divine Institutes",
+      "date": "c. AD 304–313",
+      "era": "Pre-Nicene / Constantinian Transition",
+      "kind": "Primary patristic text",
+      "topics": ["Apologetics", "Christology", "Christian Ethics"],
+      "primary_url": "https://www.newadvent.org/fathers/0701.htm",
+      "reader_url": "",
+      "license": "Historic ANF translation presented by New Advent; consult critical editions for academic publication.",
+      "status": "Indexed",
+      "notes": "Work-level record at the pre-Nicene / Constantinian transition. It is indexed for context, not as evidence that later conciliar formulations were already stated in identical terms.",
+      "provenance_class": "Primary Text",
+      "related_topics": ["Constantine / Nicaea: “Constantine Created the Catholic Church”", "Historical Myth: “Nicaea Invented the Divinity of Jesus”", "Islam: “Jesus Is Only a Prophet, Not Divine”"]
     }
   ]
 }
